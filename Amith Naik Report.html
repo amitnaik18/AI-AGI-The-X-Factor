@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI & AGI: The X Factor — Amith Naik | Strategic Report 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030812;
+    --surface: #0a1628;
+    --surface2: #0f1f3d;
+    --cyan: #00d4ff;
+    --cyan-dim: #00a8cc;
+    --gold: #f5c542;
+    --text: #e8edf5;
+    --text-dim: #8899bb;
+    --border: rgba(0,212,255,0.15);
+    --glow: 0 0 40px rgba(0,212,255,0.2);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: screen;
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(0,212,255,0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+  }
+
+  /* Canvas background */
+  #canvas-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(3,8,18,0.95), transparent);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 60px 80px;
+    overflow: hidden;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    background: rgba(0,212,255,0.05);
+    width: fit-content;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3.2rem, 7vw, 7.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-title .line1 { display: block; color: var(--text); }
+  .hero-title .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--cyan) 0%, #60efff 50%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-title .x-factor {
+    position: relative;
+    display: inline-block;
+  }
+  .hero-title .x-factor::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--gold));
+    border-radius: 2px;
+  }
+
+  .hero-meta {
+    margin-top: 48px;
+    display: flex;
+    gap: 60px;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .hero-meta-item {}
+  .hero-meta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .hero-meta-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .hero-quote {
+    margin-top: 64px;
+    max-width: 620px;
+    padding: 28px 32px;
+    border-left: 2px solid var(--cyan);
+    background: rgba(0,212,255,0.04);
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+  .hero-quote p {
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+  .hero-quote cite {
+    display: block;
+    margin-top: 12px;
+    font-style: normal;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 60px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.8s 0.7s ease both;
+  }
+  .hero-scroll-line {
+    width: 48px;
+    height: 1px;
+    background: var(--cyan);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  .hero-scroll span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* Large decorative number */
+  .hero-deco {
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28vw;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,212,255,0.06);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* STATS STRIP */
+  .stats-strip {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,22,40,0.8);
+    backdrop-filter: blur(20px);
+  }
+  .stat-item {
+    padding: 40px 48px;
+    border-right: 1px solid var(--border);
+    transition: background 0.3s;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item:hover { background: rgba(0,212,255,0.04); }
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    background: linear-gradient(135deg, var(--cyan), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .stat-label {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .stat-source {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(0,212,255,0.5);
+    letter-spacing: 0.08em;
+  }
+
+  /* SECTIONS SHARED */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 60px;
+  }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--cyan);
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 56px;
+  }
+
+  /* TECH STACK */
+  .tech-section { background: var(--bg); }
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .tech-card {
+    background: var(--surface);
+    padding: 48px 44px;
+    transition: background 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tech-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .tech-card:hover { background: var(--surface2); }
+  .tech-card:hover::before { opacity: 1; }
+  .tech-card-icon {
+    width: 48px; height: 48px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    font-size: 1.4rem;
+    background: rgba(0,212,255,0.06);
+  }
+  .tech-card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 12px;
+  }
+  .tech-card-abbr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+  .tech-card-desc {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+  .tech-card-stat {
+    margin-top: 24px;
+    padding: 12px 16px;
+    background: rgba(0,212,255,0.06);
+    border-left: 2px solid var(--cyan);
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+  .tech-card-stat strong { color: var(--cyan); }
+
+  /* ADOPTION BAR */
+  .adoption-bar {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .adoption-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .adoption-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--gold));
+    border-radius: 2px;
+    transform-origin: left;
+    animation: barGrow 1.5s ease-out both;
+  }
+  .adoption-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cyan);
+    min-width: 36px;
+  }
+
+  /* ROADMAP */
+  .roadmap-section { background: var(--surface); }
+  .roadmap-timeline {
+    position: relative;
+    padding-left: 48px;
+  }
+  .roadmap-line {
+    position: absolute;
+    left: 11px;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--cyan), transparent);
+  }
+  .roadmap-item {
+    position: relative;
+    padding: 0 0 56px 40px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .roadmap-item.visible { opacity: 1; transform: translateX(0); }
+  .roadmap-dot {
+    position: absolute;
+    left: -48px;
+    top: 6px;
+    width: 24px; height: 24px;
+    border: 2px solid var(--cyan);
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .roadmap-dot-inner {
+    width: 8px; height: 8px;
+    background: var(--cyan);
+    border-radius: 50%;
+  }
+  .roadmap-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .roadmap-milestone {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  .roadmap-desc {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+  .roadmap-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .roadmap-tag {
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* INDUSTRIES */
+  .industries-section { background: var(--bg); }
+  .industries-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: var(--border);
+  }
+  .industry-card {
+    background: var(--surface);
+    padding: 48px;
+    display: flex;
+    gap: 32px;
+    transition: background 0.3s;
+  }
+  .industry-card:hover { background: var(--surface2); }
+  .industry-number {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    color: rgba(0,212,255,0.12);
+    line-height: 1;
+    min-width: 60px;
+  }
+  .industry-content {}
+  .industry-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+  .industry-desc {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .industry-highlight {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    background: rgba(0,212,255,0.05);
+    border-left: 2px solid var(--gold);
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-top: 12px;
+  }
+  .industry-highlight strong { color: var(--gold); }
+
+  /* MYTH BUSTING */
+  .myth-section {
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .myth-section::before {
+    content: 'MYTH';
+    position: absolute;
+    right: -60px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20vw;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(245,197,66,0.05);
+    pointer-events: none;
+  }
+
+  .myth-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .myth-col-header {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .myth-col-header.red { color: #ff6b6b; }
+  .myth-col-header.green { color: #4ade80; }
+  .myth-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-dim);
+    transition: border-color 0.3s;
+  }
+  .myth-item:hover { border-color: rgba(0,212,255,0.3); }
+  .myth-icon { font-size: 1rem; line-height: 1.6; flex-shrink: 0; }
+
+  /* INVESTMENT */
+  .invest-section { background: var(--bg); }
+  .invest-banner {
+    background: linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(245,197,66,0.05) 100%);
+    border: 1px solid var(--border);
+    padding: 60px 80px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 60px;
+    align-items: center;
+  }
+  .invest-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .invest-title span {
+    display: block;
+    background: linear-gradient(135deg, var(--gold), #ffdc73);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .invest-detail {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    max-width: 400px;
+    margin-top: 20px;
+  }
+  .invest-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 32px;
+    padding: 14px 28px;
+    background: var(--cyan);
+    color: var(--bg);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .invest-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,212,255,0.3);
+  }
+  .invest-pillars {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .invest-pillar {
+    text-align: center;
+    padding: 28px 36px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    min-width: 200px;
+  }
+  .invest-pillar-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .invest-pillar-label {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* AUTHOR SECTION */
+  .author-section {
+    background: var(--surface);
+    padding: 100px 60px;
+  }
+  .author-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 60px;
+    align-items: start;
+    max-width: 900px;
+  }
+  .author-avatar {
+    width: 140px; height: 140px;
+    border: 2px solid var(--border);
+    border-radius: 0;
+    background: linear-gradient(135deg, var(--surface2), rgba(0,212,255,0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3.5rem;
+    color: var(--cyan);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .author-avatar::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 1px solid rgba(0,212,255,0.15);
+    pointer-events: none;
+  }
+  .author-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .author-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .author-bio {
+    font-size: 0.92rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+  }
+  .author-report-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 12px 24px;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .author-report-link:hover { background: rgba(0,212,255,0.08); }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 48px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+  }
+  .footer-copy {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .footer-links { display: flex; gap: 32px; }
+  .footer-links a {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--cyan); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @keyframes scrollLine {
+    0%, 100% { transform: scaleX(1); opacity: 1; }
+    50% { transform: scaleX(0.5); opacity: 0.3; }
+  }
+  @keyframes barGrow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    nav { padding: 20px 30px; }
+    section { padding: 80px 30px; }
+    .hero { padding: 100px 30px 60px; }
+    .stats-strip { grid-template-columns: repeat(2, 1fr); }
+    .tech-grid { grid-template-columns: repeat(2, 1fr); }
+    .industries-grid { grid-template-columns: 1fr; }
+    .invest-banner { grid-template-columns: 1fr; }
+    .myth-grid { grid-template-columns: 1fr; }
+    .author-card { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .hero-deco { font-size: 40vw; right: -60px; opacity: 0.5; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    .stats-strip { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: 1fr; }
+    .hero-meta { flex-direction: column; gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<canvas id="canvas-bg"></canvas>
+
+<nav>
+  <div class="nav-logo">Amith Naik</div>
+  <div class="nav-links">
+    <a href="#tech">Technology</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#industries">Industries</a>
+    <a href="#insights">Insights</a>
+    <a href="#author">About</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-deco">X</div>
+  <div class="hero-badge">Strategic Technology Research Report · May 2026</div>
+  <h1 class="hero-title">
+    <span class="line1">AI &amp; AGI:</span>
+    <span class="line2">The <span class="x-factor">X Factor</span></span>
+  </h1>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Author</div>
+      <div class="hero-meta-value">Amith Naik</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Published</div>
+      <div class="hero-meta-value">May 2026</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Edition</div>
+      <div class="hero-meta-value">First Edition</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Horizon</div>
+      <div class="hero-meta-value">2026 – 2030</div>
+    </div>
+  </div>
+  <div class="hero-quote">
+    <p>"The question is not whether AI will change the world — it is whether we are ready to lead that change."</p>
+    <cite>— Amith Naik</cite>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>Scroll to explore</span>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat-item reveal">
+    <div class="stat-number" data-target="1300" data-prefix="$" data-suffix="B+">$0B+</div>
+    <div class="stat-label">Global AI investment projected by 2030</div>
+    <div class="stat-source">Goldman Sachs, 2025</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-1">
+    <div class="stat-number" data-target="15.7" data-prefix="$" data-suffix="T">$0T</div>
+    <div class="stat-label">Economic contribution of AI to global GDP by 2030</div>
+    <div class="stat-source">PwC Global AI Study, 2025</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-2">
+    <div class="stat-number" data-target="97" data-suffix="M">0M</div>
+    <div class="stat-label">New jobs AI will create globally by 2030</div>
+    <div class="stat-source">WEF Future of Jobs, 2025</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-3">
+    <div class="stat-number" data-target="3" data-suffix="–5x">0–5x</div>
+    <div class="stat-label">Productivity advantage for AI-adopting organizations</div>
+    <div class="stat-source">McKinsey Global Institute, 2025</div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<section class="tech-section" id="tech">
+  <div class="section-label">Section 03</div>
+  <h2 class="section-title reveal">The Technology<br>Stack Decoded</h2>
+
+  <div class="tech-grid">
+    <!-- ML -->
+    <div class="tech-card reveal">
+      <div class="tech-card-icon">⚡</div>
+      <div class="tech-card-abbr">ML · Machine Learning</div>
+      <div class="tech-card-title">The Foundation Layer</div>
+      <div class="tech-card-desc">Algorithms that learn from data without explicit programming, enabling continuous performance improvement through experience. Powers everything from spam filters to recommendation engines.</div>
+      <div class="adoption-bar">
+        <div class="adoption-track"><div class="adoption-fill" style="width:92%"></div></div>
+        <div class="adoption-pct">92%</div>
+      </div>
+      <div class="tech-card-stat">Market projected to reach <strong>$503.4B by 2030</strong> at 36.2% CAGR</div>
+    </div>
+
+    <!-- DL -->
+    <div class="tech-card reveal reveal-delay-1">
+      <div class="tech-card-icon">🧠</div>
+      <div class="tech-card-abbr">DL · Deep Learning</div>
+      <div class="tech-card-title">The Pattern Master</div>
+      <div class="tech-card-desc">Multi-layered neural networks that model complex hierarchical patterns. Powers image recognition, language translation, and generative AI. Underpins all modern LLMs via Transformer architectures.</div>
+      <div class="adoption-bar">
+        <div class="adoption-track"><div class="adoption-fill" style="width:88%"></div></div>
+        <div class="adoption-pct">88%</div>
+      </div>
+      <div class="tech-card-stat">NVIDIA data center revenue <strong>$80.3B in FY2026</strong> driven by DL demand</div>
+    </div>
+
+    <!-- Neural Networks -->
+    <div class="tech-card reveal reveal-delay-2">
+      <div class="tech-card-icon">🕸</div>
+      <div class="tech-card-abbr">NN · Neural Networks</div>
+      <div class="tech-card-title">The Computation Core</div>
+      <div class="tech-card-desc">Brain-inspired interconnected nodes processing signals in layers. From CNNs for vision to Transformers (GPT-4, Gemini, Claude) and Graph Neural Networks for drug discovery.</div>
+      <div class="adoption-bar">
+        <div class="adoption-track"><div class="adoption-fill" style="width:85%"></div></div>
+        <div class="adoption-pct">85%</div>
+      </div>
+      <div class="tech-card-stat">AlphaFold 3 predicted <strong>200M+ protein structures</strong> in months</div>
+    </div>
+
+    <!-- NLP -->
+    <div class="tech-card reveal">
+      <div class="tech-card-icon">💬</div>
+      <div class="tech-card-abbr">NLP · Natural Language Processing</div>
+      <div class="tech-card-title">The Language Bridge</div>
+      <div class="tech-card-desc">Enabling machines to understand and generate human language. GPT-4, Gemini 1.5 Pro, Claude 3.5 represent the state of the art with emergent reasoning capabilities.</div>
+      <div class="adoption-bar">
+        <div class="adoption-track"><div class="adoption-fill" style="width:90%"></div></div>
+        <div class="adoption-pct">90%</div>
+      </div>
+      <div class="tech-card-stat">NLP market growing from <strong>$29.7B (2025) → $161.8B (2030)</strong></div>
+    </div>
+
+    <!-- Blockchain -->
+    <div class="tech-card reveal reveal-delay-1">
+      <div class="tech-card-icon">🔗</div>
+      <div class="tech-card-abbr">BC · Blockchain + AI Convergence</div>
+      <div class="tech-card-title">The Trust Layer</div>
+      <div class="tech-card-desc">Immutable ledger technology emerging as the governance backbone for AI. Ensures data provenance, model auditability, and enables federated learning without sharing sensitive data.</div>
+      <div class="adoption-bar">
+        <div class="adoption-track"><div class="adoption-fill" style="width:72%"></div></div>
+        <div class="adoption-pct">72%</div>
+      </div>
+      <div class="tech-card-stat">JPMorgan saves <strong>$150M annually</strong> via blockchain + ML fraud detection</div>
+    </div>
+
+    <!-- AGI -->
+    <div class="tech-card reveal reveal-delay-2">
+      <div class="tech-card-icon">🚀</div>
+      <div class="tech-card-abbr">AGI · Artificial General Intelligence</div>
+      <div class="tech-card-title">The Horizon</div>
+      <div class="tech-card-desc">A system capable of performing any intellectual task a human can. While debated, trajectory is clear: each model generation closes the gap. Early deployments expected in controlled domains by 2030.</div>
+      <div class="adoption-bar">
+        <div class="adoption-track"><div class="adoption-fill" style="width:45%"></div></div>
+        <div class="adoption-pct">45%</div>
+      </div>
+      <div class="tech-card-stat"><strong>Emerging:</strong> Multimodal prototypes expected by 2027</div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap-section" id="roadmap">
+  <div class="section-label">Section 05</div>
+  <h2 class="section-title reveal">5-Year Strategic<br>Roadmap 2026–2030</h2>
+
+  <div class="roadmap-timeline">
+    <div class="roadmap-line"></div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-year">2026 · NOW</div>
+      <div class="roadmap-milestone">LLM Ubiquity & AI Co-Pilots</div>
+      <div class="roadmap-desc">50% of knowledge work augmented by AI assistants. Every enterprise software suite ships with an AI co-pilot. The inflection point is here.</div>
+      <div class="roadmap-tags">
+        <span class="roadmap-tag">OpenAI</span>
+        <span class="roadmap-tag">Microsoft Copilot</span>
+        <span class="roadmap-tag">Google Gemini</span>
+        <span class="roadmap-tag">Anthropic Claude</span>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-year">2027 · NEAR</div>
+      <div class="roadmap-milestone">Multimodal AGI Prototypes & Autonomous Agents</div>
+      <div class="roadmap-desc">AI-generated scientific publications. Autonomous code deployment. Research agents that operate independently for days. The first glimpse of general intelligence.</div>
+      <div class="roadmap-tags">
+        <span class="roadmap-tag">DeepMind</span>
+        <span class="roadmap-tag">xAI Grok</span>
+        <span class="roadmap-tag">Meta AI</span>
+        <span class="roadmap-tag">OpenAI o-series</span>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-year">2028 · MID</div>
+      <div class="roadmap-milestone">Humanoid Robotics + Physical AI at Scale</div>
+      <div class="roadmap-desc">Physical AI labor enters logistics, construction, and elder care. Humanoid robots move from demos to deployment. The digital-physical boundary dissolves.</div>
+      <div class="roadmap-tags">
+        <span class="roadmap-tag">Tesla Optimus</span>
+        <span class="roadmap-tag">Figure AI</span>
+        <span class="roadmap-tag">Boston Dynamics</span>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-year">2029 · GOVERNANCE</div>
+      <div class="roadmap-milestone">AI-Blockchain Governance Frameworks Mandated</div>
+      <div class="roadmap-desc">Auditable AI decisions required in finance, healthcare, and legal sectors. G7 + EU AI Act enforcement drives full compliance. Trust becomes infrastructure.</div>
+      <div class="roadmap-tags">
+        <span class="roadmap-tag">EU AI Act</span>
+        <span class="roadmap-tag">G7 Regulation</span>
+        <span class="roadmap-tag">Hyperledger</span>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-year">2030 · HORIZON</div>
+      <div class="roadmap-milestone">Early AGI Systems in Controlled Domains</div>
+      <div class="roadmap-desc">Autonomous scientific discovery. 40% productivity uplift across all sectors. The organizations that started transformation in 2026 capture 60% of available economic value.</div>
+      <div class="roadmap-tags">
+        <span class="roadmap-tag">Post-AGI Labs</span>
+        <span class="roadmap-tag">National AI Programs</span>
+        <span class="roadmap-tag">$1.3T Invested</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section class="industries-section" id="industries">
+  <div class="section-label">Section 04</div>
+  <h2 class="section-title reveal">Industry<br>Transformations</h2>
+
+  <div class="industries-grid">
+    <div class="industry-card reveal">
+      <div class="industry-number">01</div>
+      <div class="industry-content">
+        <div class="industry-title">Healthcare & Life Sciences</div>
+        <div class="industry-desc">Google DeepMind's AlphaFold 3 is actively used in drug discovery at AstraZeneca, Pfizer, and Novartis. AI-powered diagnostics match or exceed radiologist accuracy across 26 conditions.</div>
+        <div class="industry-highlight"><strong>Impact:</strong> Drug discovery timelines cut from 12 years to under 4 years. $45B market growing to $187B by 2030.</div>
+      </div>
+    </div>
+
+    <div class="industry-card reveal reveal-delay-1">
+      <div class="industry-number">02</div>
+      <div class="industry-content">
+        <div class="industry-title">Finance & Banking</div>
+        <div class="industry-desc">JPMorgan's Coin platform reviews 12,000 credit agreements in seconds — replacing 360,000 lawyer-hours. Goldman Sachs' Marcus AI approves loans 99.6% faster than traditional underwriting.</div>
+        <div class="industry-highlight"><strong>Impact:</strong> AI fraud detection saves global institutions $9.3B annually. Algorithmic trading = 73% of US equity volume.</div>
+      </div>
+    </div>
+
+    <div class="industry-card reveal">
+      <div class="industry-number">03</div>
+      <div class="industry-content">
+        <div class="industry-title">Manufacturing & Supply Chain</div>
+        <div class="industry-desc">Siemens Industrial Copilot (NVIDIA Omniverse + LLM) lets workers query machine diagnostics in natural language, reducing downtime by 25%. Amazon processes 1.6M packages daily with AI routing.</div>
+        <div class="industry-highlight"><strong>Impact:</strong> Walmart cut food traceability from 7 days to 2 seconds using AI + Hyperledger blockchain.</div>
+      </div>
+    </div>
+
+    <div class="industry-card reveal reveal-delay-1">
+      <div class="industry-number">04</div>
+      <div class="industry-content">
+        <div class="industry-title">Education</div>
+        <div class="industry-desc">Khan Academy's Khanmigo (GPT-4 powered) provides personalized Socratic guidance with 31% improvement in math proficiency. Microsoft Copilot assists 160 million students globally.</div>
+        <div class="industry-highlight"><strong>Impact:</strong> AI tutoring acts as a research partner, not a shortcut — amplifying human potential at scale.</div>
+      </div>
+    </div>
+
+    <div class="industry-card reveal">
+      <div class="industry-number">05</div>
+      <div class="industry-content">
+        <div class="industry-title">Automotive & Mobility</div>
+        <div class="industry-desc">Tesla's FSD system trained on 5 billion miles of real-world driving data using custom neural architectures on the Dojo supercomputer (160 EFLOPS). Waymo robotaxis deployed in 4 US cities.</div>
+        <div class="industry-highlight"><strong>Impact:</strong> Waymo safety record 6× better than human drivers. Full autonomy approaching mass deployment.</div>
+      </div>
+    </div>
+
+    <div class="industry-card reveal reveal-delay-1">
+      <div class="industry-number">06</div>
+      <div class="industry-content">
+        <div class="industry-title">Customer Service & CX</div>
+        <div class="industry-desc">Businesses deploying AI-powered NLP for customer service report a 40% reduction in resolution time and 28% increase in satisfaction scores. Net customer service roles grew 12% at AI-adopting companies.</div>
+        <div class="industry-highlight"><strong>Impact:</strong> Tier-1 queries automated; complex cases routed to human empathy. Best of both worlds realized.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MYTH BUSTING -->
+<section class="myth-section" id="insights">
+  <div class="section-label">Section 06</div>
+  <h2 class="section-title reveal">Addressing the Myth:<br>"AI Will Replace Humans"</h2>
+
+  <div class="myth-grid reveal">
+    <div>
+      <div class="myth-col-header red">❌ The Myth</div>
+      <div class="myth-item"><span class="myth-icon">⚖️</span> AI will eliminate lawyers as it passes the bar exam at the 90th percentile</div>
+      <div class="myth-item"><span class="myth-icon">🩺</span> Doctors will become redundant as AI outperforms radiologists on diagnostics</div>
+      <div class="myth-item"><span class="myth-icon">💻</span> Coders will be replaced since GitHub Copilot writes 46% of code</div>
+      <div class="myth-item"><span class="myth-icon">📞</span> All customer service jobs will vanish as AI handles conversations</div>
+      <div class="myth-item"><span class="myth-icon">🎨</span> Creative sector is at risk from AI-generated art and content</div>
+    </div>
+    <div>
+      <div class="myth-col-header green">✅ The Reality</div>
+      <div class="myth-item"><span class="myth-icon">⚖️</span> Legal AI created 47,000 new paralegal/AI specialist roles in 2024. Lawyers focus on strategy, advocacy, and judgment — Law Society UK, 2025</div>
+      <div class="myth-item"><span class="myth-icon">🩺</span> AI reduced diagnostic errors by 31%. Physicians retain authority, empathy, and complex decision-making — JAMA, 2025</div>
+      <div class="myth-item"><span class="myth-icon">💻</span> Software engineering job postings grew 23% YoY in 2025. Engineers architect systems and validate AI output — LinkedIn, 2025</div>
+      <div class="myth-item"><span class="myth-icon">📞</span> Net customer service roles grew 12% at companies with AI deployment. Humans handle complex empathy cases — McKinsey, 2025</div>
+      <div class="myth-item"><span class="myth-icon">🎨</span> Creative sector employment hit record highs in 2025. AI generates options; humans curate meaning — WEF, 2025</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 60px; padding: 40px; border: 1px solid var(--border); background: rgba(0,212,255,0.03);" class="reveal">
+    <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; margin-bottom: 16px; color: var(--text);">The Augmentation Verdict</div>
+    <p style="font-size: 0.95rem; line-height: 1.8; color: var(--text-dim); max-width: 700px;">Historical evidence, current research, and emerging employment data all converge on one conclusion: <strong style="color: var(--text);">AI is a tool of amplification, not replacement.</strong> The individuals most at risk are not those whose jobs AI can do — it is those who refuse to learn how to work alongside AI. Human-AI teams consistently outperform either humans alone or AI alone across creative, analytical, and interpersonal tasks (MIT Sloan, 2025).</p>
+  </div>
+</section>
+
+<!-- INVESTMENT -->
+<section class="invest-section" id="invest">
+  <div class="invest-banner reveal">
+    <div>
+      <div class="section-label" style="margin-bottom: 24px;">Investment Outlook</div>
+      <div class="invest-title">
+        <span>$1.3</span>
+        Trillion
+      </div>
+      <div class="invest-detail">Global AI investment forecast by 2030. Governments worldwide have committed $500B+ in sovereign AI funds. Organizations that begin AI transformation now will capture an estimated 60% of available economic value. The window to act is 2026–2028.</div>
+      <a href="#author" class="invest-cta">Read the Full Report →</a>
+    </div>
+    <div class="invest-pillars">
+      <div class="invest-pillar">
+        <div class="invest-pillar-num">7</div>
+        <div class="invest-pillar-label">Recommendations for Organizations</div>
+      </div>
+      <div class="invest-pillar">
+        <div class="invest-pillar-num">5</div>
+        <div class="invest-pillar-label">Technology Domains Analyzed</div>
+      </div>
+      <div class="invest-pillar">
+        <div class="invest-pillar-num">20+</div>
+        <div class="invest-pillar-label">Research Sources Cited</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTHOR -->
+<section class="author-section" id="author">
+  <div class="section-label">About the Author</div>
+  <div class="author-card reveal">
+    <div class="author-avatar">AN</div>
+    <div>
+      <div class="author-name">Amith Naik</div>
+      <div class="author-title">Strategic Technology Researcher · May 2026</div>
+      <div class="author-bio">
+        Amith Naik is the author of <em>AI &amp; AGI: The X Factor — Strategic Report 2026</em>, a rigorous evidence-based analysis of how Artificial Intelligence and Artificial General Intelligence will serve as the decisive X Factor across the next five years. Drawing on publicly available data and strategic disclosures from Google DeepMind, OpenAI, Microsoft, Meta AI, IBM, AWS, NVIDIA, Anthropic, and the World Economic Forum, this report presents actionable intelligence for organizations, policymakers, and individuals.
+        <br><br>
+        The report integrates Machine Learning, Deep Learning, Neural Networks, Natural Language Processing, and Blockchain Technology into a unified strategic framework — covering the technology stack, industry applications, 5-year roadmap, workforce impact analysis, and investment outlook.
+      </div>
+      <a href="#" class="author-report-link">📄 AI &amp; AGI: The X Factor — First Edition 2026</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">AMITH NAIK · 2026</div>
+  <div class="footer-copy">© 2026 Amith Naik · All rights reserved · Research Report</div>
+  <div class="footer-links">
+    <a href="#tech">Technology</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#industries">Industries</a>
+    <a href="#insights">Insights</a>
+  </div>
+</footer>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = (mx - 6) + 'px';
+  cursor.style.top  = (my - 6) + 'px';
+});
+function animRing() {
+  rx += (mx - rx - 18) * 0.12;
+  ry += (my - ry - 18) * 0.12;
+  cursorRing.style.left = rx + 'px';
+  cursorRing.style.top  = ry + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2)'; });
+  el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)'; });
+});
+
+// Particle Canvas
+const canvas = document.getElementById('canvas-bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for (let i = 0; i < 80; i++) {
+  particles.push({
+    x: Math.random() * 1920,
+    y: Math.random() * 1080,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    r: Math.random() * 1.5 + 0.3,
+    a: Math.random() * 0.6 + 0.2
+  });
+}
+
+function drawCanvas() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W;
+    if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H;
+    if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(0,212,255,${p.a})`;
+    ctx.fill();
+  });
+  // Draw connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i+1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 160) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,212,255,${0.12 * (1 - dist/160)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawCanvas);
+}
+drawCanvas();
+
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal, .roadmap-item');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => io.observe(el));
+
+// Counter animation
+function animateCounters() {
+  document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const isFloat = !Number.isInteger(target);
+    const duration = 1800;
+    const start = performance.now();
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = eased * target;
+      el.textContent = prefix + (isFloat ? current.toFixed(1) : Math.round(current)) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  });
+}
+
+// Trigger counters when stats strip is visible
+const statsStrip = document.querySelector('.stats-strip');
+const statsObs = new IntersectionObserver(([entry]) => {
+  if (entry.isIntersecting) { animateCounters(); statsObs.disconnect(); }
+}, { threshold: 0.3 });
+statsObs.observe(statsStrip);
+</script>
+</body>
+</html>
